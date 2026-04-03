@@ -55,11 +55,11 @@ const Footer = () => {
               Contact
             </h4>
             <div className="space-y-2.5 text-sm font-body text-muted-foreground">
-              <a href="tel:+94771234567" className="flex items-center gap-2 hover:text-foreground transition-colors">
-                <Phone className="h-3.5 w-3.5" /> +94 77 123 4567
+              <a href="tel:+94776293107" className="flex items-center gap-2 hover:text-foreground transition-colors">
+                <Phone className="h-3.5 w-3.5" /> +94 77 62 93 107
               </a>
               <a href="mailto:info@TravelDealL.com" className="flex items-center gap-2 hover:text-foreground transition-colors">
-                <Mail className="h-3.5 w-3.5" /> info@TravelDealL.com
+                <Mail className="h-3.5 w-3.5" /> TravelDealSriLanka@gmail.com
               </a>
               <span className="flex items-center gap-2">
                 <MapPin className="h-3.5 w-3.5" /> Katunayaka, Sri Lanka
