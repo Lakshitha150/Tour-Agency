@@ -64,7 +64,7 @@ const ContactSection = () => {
 
             {/* WhatsApp alternative CTA */}
             <a
-              href="https://wa.me/94771234567"
+              href="https://wa.me/94776293107"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-md bg-whatsapp text-white font-body font-semibold text-sm hover:brightness-110 transition-all duration-300"

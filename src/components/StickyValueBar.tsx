@@ -58,7 +58,7 @@ const StickyValueBar = () => {
           <div>
             <p className="text-xs font-body text-muted-foreground mb-1">Starting from</p>
             <p className="text-2xl font-heading font-bold text-foreground">
-              $89 <span className="text-sm font-body font-normal text-muted-foreground">/ person</span>
+              $00 <span className="text-sm font-body font-normal text-muted-foreground">/ person</span>
             </p>
           </div>
 
@@ -82,7 +82,7 @@ const StickyValueBar = () => {
       <div className="fixed bottom-0 left-0 right-0 z-40 bg-card border-t border-border shadow-nordic-hover p-4 flex items-center justify-between lg:hidden">
         <div>
           <p className="text-xs font-body text-muted-foreground">From</p>
-          <p className="text-lg font-heading font-bold text-foreground">$89 <span className="text-xs font-body font-normal text-muted-foreground">/ person</span></p>
+          <p className="text-lg font-heading font-bold text-foreground">$00 <span className="text-xs font-body font-normal text-muted-foreground">/ person</span></p>
         </div>
         <a
           href="#contact"
