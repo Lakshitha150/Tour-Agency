@@ -8,7 +8,7 @@
 @layer base {
   :root {
     /* ── Nordic light palette ──
-       Following nordicvisitor.com: airy whites, soft grays, charcoal text.
+       Followingq nordicvisitor.com: airy whites, soft grays, charcoal text.
        Gold accent used ONLY for CTAs and trust signals. */
     --background: 0 0% 99%;              /* #FCFCFC — near-white canvas */
     --foreground: 220 15% 20%;            /* Deep charcoal for max readability */
