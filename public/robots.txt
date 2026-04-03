@@ -12,3 +12,5 @@ Allow: /
 
 User-agent: *
 Allow: /
+
+Sitemap: https://lovely-sprinkles-6352d3.netlify.app/sitemap.xml
