@@ -1,0 +1,114 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer base {
+  :root {
+    /* ── Nordic light palette ──
+       Following nordicvisitor.com: airy whites, soft grays, charcoal text.
+       Gold accent used ONLY for CTAs and trust signals. */
+    --background: 0 0% 99%;              /* #FCFCFC — near-white canvas */
+    --foreground: 220 15% 20%;            /* Deep charcoal for max readability */
+
+    --card: 0 0% 100%;                    /* Pure white cards */
+    --card-foreground: 220 15% 20%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 15% 20%;
+
+    /* Gold as the singular accent — Nordic "one accent" rule */
+    --primary: 43 64% 52%;               /* Rich Gold #D4AF37 */
+    --primary-foreground: 0 0% 100%;     /* White text on gold buttons */
+
+    --secondary: 220 14% 96%;            /* Very light gray for subtle backgrounds */
+    --secondary-foreground: 220 15% 20%;
+
+    --muted: 220 14% 96%;               /* Light gray muted areas */
+    --muted-foreground: 220 10% 50%;     /* Medium gray for secondary text */
+
+    --accent: 43 64% 52%;               /* Gold accent — matches primary */
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Borders are very subtle in Nordic design — barely visible */
+    --border: 220 14% 92%;
+    --input: 220 14% 92%;
+    --ring: 43 64% 52%;                  /* Gold focus ring */
+
+    --radius: 0.5rem;
+
+    /* ── Custom semantic tokens ── */
+    --gold: 43 64% 52%;
+    --gold-light: 48 80% 70%;
+    --emerald: 160 84% 39%;              /* Alternative accent for trust signals */
+    --whatsapp: 142 70% 40%;
+
+    /* Sidebar tokens (required by shadcn) */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 220 15% 20%;
+    --sidebar-primary: 43 64% 52%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 14% 96%;
+    --sidebar-accent-foreground: 220 15% 20%;
+    --sidebar-border: 220 14% 92%;
+    --sidebar-ring: 43 64% 52%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  /* Smooth scroll for anchor navigation — essential for single-page travel sites */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Nordic body: Inter for all functional/body text, light background */
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Playfair Display ONLY for editorial headings (H2s) — Nordic approach uses
+     serif sparingly for elegance, not everywhere */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+  }
+}
+
+@layer utilities {
+  /* Gold gradient text — used very sparingly in Nordic design (logo, one hero word) */
+  .text-gold-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(43 64% 52%), hsl(48 80% 75%));
+  }
+
+  /* Nordic card shadow — subtle, refined elevation instead of heavy glassmorphism */
+  .shadow-nordic {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.06);
+  }
+
+  /* Hover-elevated shadow — slightly more pronounced for interactive cards */
+  .shadow-nordic-hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08), 0 8px 32px rgba(0, 0, 0, 0.06);
+  }
+
+  /* Trust badge green dot pulse */
+  .pulse-dot {
+    animation: pulse-dot 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+}
