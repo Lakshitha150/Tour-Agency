@@ -140,55 +140,28 @@ const HeroSection = () => {
             {/* Subtext */}
             <motion.p
               variants={itemVariants}
-              className="text-base sm:text-lg font-body font-light text-white/70 max-w-2xl mx-auto mb-10 leading-relaxed"
+              className="text-base sm:text-lg font-body font-light text-white/70 max-w-2xl mx-auto mb-8 leading-relaxed"
             >
               {slide.subtitle}
             </motion.p>
-          </motion.div>
-        </AnimatePresence>
 
-        {/* Search/Filter Widget — Blacklane booking widget inspired */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8, duration: 0.6 }}
-          className="max-w-3xl mx-auto"
-        >
-          <div className="bg-white/10 backdrop-blur-xl rounded-2xl border border-white/10 p-2 sm:p-3">
-            {/* Tour type tabs */}
-            <div className="flex gap-1 mb-3 overflow-x-auto scrollbar-hide">
-              {tourTypes.map((type, i) => (
-                <button
-                  key={type}
-                  onClick={() => setActiveFilter(i)}
-                  className={`px-4 py-2 rounded-lg text-sm font-body font-medium whitespace-nowrap transition-all duration-300 ${
-                    activeFilter === i
-                      ? "bg-primary text-primary-foreground"
-                      : "text-white/70 hover:text-white hover:bg-white/10"
-                  }`}
-                >
-                  {type}
-                </button>
-              ))}
-            </div>
-
-            {/* Search bar row */}
-            <div className="flex flex-col sm:flex-row gap-2">
-              <div className="flex-1 flex items-center gap-3 bg-white/10 rounded-xl px-4 py-3">
-                <MapPin className="h-4 w-4 text-white/50 flex-shrink-0" />
-                <span className="text-white/50 text-sm font-body">
-                  Where do you want to go?
-                </span>
-              </div>
+            {/* Primary Action Buttons */}
+            <motion.div variants={itemVariants} className="flex flex-col sm:flex-row justify-center items-center gap-4">
               <a
                 href="#tours"
-                className="px-8 py-3 rounded-xl bg-primary text-primary-foreground font-body font-semibold text-sm hover:brightness-110 transition-all duration-300 text-center whitespace-nowrap"
+                className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-primary text-primary-foreground font-body font-bold text-sm hover:brightness-110 shadow-lg hover:shadow-xl transition-all duration-300 text-center"
               >
-                View Tours
+                Explore Day Tours
               </a>
-            </div>
-          </div>
-        </motion.div>
+              <a
+                href="#contact"
+                className="w-full sm:w-auto px-8 py-3.5 rounded-xl border border-white/20 hover:bg-white/10 text-white font-body font-semibold text-sm transition-all duration-300 text-center"
+              >
+                Plan Custom Trip
+              </a>
+            </motion.div>
+          </motion.div>
+        </AnimatePresence>
 
         {/* Slide indicators */}
         <div className="flex items-center justify-center gap-2 mt-8">
