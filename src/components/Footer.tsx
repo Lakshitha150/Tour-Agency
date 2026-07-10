@@ -34,7 +34,7 @@ const Footer = () => {
             {/* Social links placeholder */}
             <div className="flex items-center gap-3">
               <a
-                href="https://wa.me/94766040066"
+                href="https://wa.me/94766424532"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[hsl(142,70%,40%)] transition-colors duration-300"
@@ -50,7 +50,7 @@ const Footer = () => {
                 <Mail className="h-4 w-4" />
               </a>
               <a
-                href="tel:+94766040066"
+                href="tel:+94766424532"
                 className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary transition-colors duration-300"
                 aria-label="Phone"
               >
@@ -112,11 +112,11 @@ const Footer = () => {
             </h4>
             <div className="space-y-3 text-sm font-body">
               <a
-                href="tel:+94766040066"
+                href="tel:+94766424532"
                 className="flex items-center gap-2.5 hover:text-white transition-colors"
               >
                 <Phone className="h-3.5 w-3.5 flex-shrink-0" />
-                +94 766 040 066
+                +94 766 424 532
               </a>
               <a
                 href="mailto:traveldealsrilanka@gmail.com"

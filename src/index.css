@@ -184,3 +184,50 @@
     color: #ffffff;
   }
 }
+
+/* ── Print Brochure Styles ── */
+@media print {
+  html, body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    font-size: 11pt !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide all main elements by specifically targeting siblings of the print path */
+  body > *:not(#root) {
+    display: none !important;
+  }
+  #root > *:not(.min-h-screen) {
+    display: none !important;
+  }
+  #root > .min-h-screen > *:not(#tours) {
+    display: none !important;
+  }
+  #tours > *:not(.print-container-wrapper) {
+    display: none !important;
+  }
+
+  /* Setup the printable container to occupy the full page */
+  .print-container-wrapper {
+    display: block !important;
+    position: relative !important;
+    width: 100% !important;
+    min-height: 297mm !important; /* A4 height */
+    margin: 0 !important;
+    padding: 15mm !important;
+    box-sizing: border-box !important;
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    z-index: 9999999 !important;
+    overflow: hidden !important;
+  }
+
+  /* Force page breaks if needed */
+  .print-page-break {
+    page-break-before: always !important;
+  }
+}

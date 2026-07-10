@@ -1,13 +1,15 @@
 /**
  * FeaturedTours.tsx — Viator-style "Top Tours" section with detailed itineraries,
- * optional experiences, flyer display, and a full-screen interactive zoomable lightbox.
+ * optional experiences, flyer display, an interactive fullscreen zoomable lightbox,
+ * and a custom PDF itinerary brochure generator.
  */
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import { 
   Star, Clock, MapPin, CheckCircle2, X, AlertCircle, 
-  ZoomIn, ZoomOut, RotateCcw, MessageCircle, ArrowRight, Eye
+  ZoomIn, ZoomOut, RotateCcw, MessageCircle, ArrowRight, Eye,
+  FileText, Calendar, User, DollarSign
 } from "lucide-react";
 import { tours, TourPackage } from "@/data/tours";
 
@@ -22,13 +24,25 @@ const FeaturedTours = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [usePricedFlyer, setUsePricedFlyer] = useState(false);
 
+  // Customizer States
+  const [guestName, setGuestName] = useState("");
+  const [travelDate, setTravelDate] = useState("");
+  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+
+  // Reset customizer state when changing tours
+  useEffect(() => {
+    setGuestName("");
+    setTravelDate("");
+    setSelectedOptions([]);
+  }, [selectedTour]);
+
   // Filter tours based on category
   const filteredTours =
     activeTab === "All"
       ? tours
       : tours.filter((t) => t.type.includes(activeTab));
 
-  // Reset states when tour modal changes
+  // Lock scroll when details modal is open
   useEffect(() => {
     if (selectedTour) {
       document.body.style.overflow = "hidden";
@@ -78,10 +92,29 @@ const FeaturedTours = () => {
   };
 
   const handleWhatsAppInquiry = (tour: TourPackage) => {
+    let optString = "";
+    if (selectedOptions.length > 0) {
+      optString = `\n*Selected Options:* ${selectedOptions.join(", ")}`;
+    }
+    const dateString = travelDate ? `\n*Travel Date:* ${travelDate}` : "";
+    const nameString = guestName ? `\n*Guest Name:* ${guestName}` : "";
+
     const message = encodeURIComponent(
-      `Hi! I am interested in booking the *${tour.name}*. Could you please provide more details and availability?`
+      `Hi! I'm interested in booking the *${tour.name}*.${nameString}${dateString}${optString}\n\nCould you please confirm the itinerary and price?`
     );
-    window.open(`https://wa.me/94766040066?text=${message}`, "_blank");
+    window.open(`https://wa.me/94766424532?text=${message}`, "_blank");
+  };
+
+  const toggleOption = (optionName: string) => {
+    if (selectedOptions.includes(optionName)) {
+      setSelectedOptions(selectedOptions.filter((name) => name !== optionName));
+    } else {
+      setSelectedOptions([...selectedOptions, optionName]);
+    }
+  };
+
+  const triggerPrintItinerary = () => {
+    window.print();
   };
 
   const currentFlyerUrl = usePricedFlyer && selectedTour?.flyerImagePriced
@@ -139,7 +172,7 @@ const FeaturedTours = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.4, ease: "easeOut" }}
-                  className="group bg-card rounded-2xl overflow-hidden shadow-tour-card hover:shadow-tour-card-hover hover:-translate-y-1 transition-all duration-500 flex flex-col h-full"
+                  className="group bg-card rounded-2xl overflow-hidden shadow-tour-card hover:shadow-tour-card-hover hover:-translate-y-1 transition-all duration-500"
                 >
                   {/* Card Image */}
                   <div className="relative h-64 overflow-hidden">
@@ -173,7 +206,7 @@ const FeaturedTours = () => {
                   </div>
 
                   {/* Card Body */}
-                  <div className="p-6 flex flex-col flex-1">
+                  <div className="p-6">
                     {/* Tags */}
                     <div className="flex flex-wrap gap-1.5 mb-3">
                       {tour.type.slice(0, 3).map((t) => (
@@ -289,7 +322,7 @@ const FeaturedTours = () => {
       {/* ── DETAILED TOUR MODAL ── */}
       <AnimatePresence>
         {selectedTour && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-10">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-10 no-print">
             {/* Overlay */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -326,9 +359,9 @@ const FeaturedTours = () => {
 
               {/* Scrollable Body (Split Grid) */}
               <div className="flex-1 overflow-y-auto grid grid-cols-1 lg:grid-cols-12 gap-0">
-                {/* Left Side: Comprehensive Details */}
+                {/* Left Side: Comprehensive Details & Customizer */}
                 <div className="lg:col-span-7 p-6 space-y-8 border-b lg:border-b-0 lg:border-r border-border">
-                  {/* Tagline & Vehicle Base Price */}
+                  {/* Overview */}
                   <div>
                     <h4 className="text-xs font-body font-semibold uppercase tracking-wider text-primary mb-2">Overview</h4>
                     <p className="text-sm font-body leading-relaxed text-foreground mb-4">
@@ -342,11 +375,68 @@ const FeaturedTours = () => {
                     )}
                   </div>
 
+                  {/* ─── LIVE ITINERARY CUSTOMIZER ─── */}
+                  <div className="p-4 bg-secondary/40 border border-border rounded-xl space-y-4">
+                    <h4 className="text-xs font-body font-bold uppercase tracking-wider text-primary flex items-center gap-1.5">
+                      <FileText className="h-4 w-4 text-primary" /> Plan & Customise Your Itinerary
+                    </h4>
+                    <p className="text-[11px] font-body text-muted-foreground leading-relaxed">
+                      Select your preferred optional add-ons below, add your details, and generate a customized PDF brochure of your personalized trip.
+                    </p>
+
+                    {/* Guest Name & Date inputs */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-[10px] font-body font-bold text-muted-foreground uppercase mb-1 flex items-center gap-1">
+                          <User className="h-3 w-3" /> Guest Name
+                        </label>
+                        <input
+                          type="text"
+                          value={guestName}
+                          onChange={(e) => setGuestName(e.target.value)}
+                          placeholder="e.g. Alice & Bob"
+                          className="w-full px-3 py-2 border border-border bg-background rounded-lg font-body text-xs focus:outline-none focus:ring-1 focus:ring-primary"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-body font-bold text-muted-foreground uppercase mb-1 flex items-center gap-1">
+                          <Calendar className="h-3 w-3" /> Travel Date
+                        </label>
+                        <input
+                          type="text"
+                          value={travelDate}
+                          onChange={(e) => setTravelDate(e.target.value)}
+                          placeholder="e.g. August 20, 2026"
+                          className="w-full px-3 py-2 border border-border bg-background rounded-lg font-body text-xs focus:outline-none focus:ring-1 focus:ring-primary"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Live Estimate Cost Box */}
+                    <div className="p-3 bg-card border border-border rounded-lg flex items-center justify-between text-xs font-body">
+                      <div>
+                        <span className="text-[10px] text-muted-foreground block uppercase font-semibold">Custom Add-on Cost Summary:</span>
+                        <span className="font-semibold text-foreground">
+                          {selectedOptions.length === 0 
+                            ? "No options selected (Base package only)" 
+                            : `${selectedOptions.length} option(s) selected`}
+                        </span>
+                      </div>
+                      <button
+                        onClick={triggerPrintItinerary}
+                        className="px-3.5 py-2 bg-primary text-primary-foreground hover:brightness-110 rounded-lg font-semibold text-xs transition-all flex items-center gap-1.5"
+                      >
+                        <FileText className="h-3.5 w-3.5" />
+                        Generate Itinerary PDF
+                      </button>
+                    </div>
+                  </div>
+
                   {/* Main Tour Plan / Itinerary */}
                   <div>
                     <h4 className="text-xs font-body font-semibold uppercase tracking-wider text-primary mb-4">Main Tour Plan</h4>
                     <div className="space-y-4 relative before:absolute before:left-3 before:top-2 before:bottom-2 before:w-[2px] before:bg-border">
-                      {selectedTour.attractions.map((att, i) => (
+                      {selectedTour.attractions.map((att) => (
                         <div key={att.name} className="relative pl-8 flex flex-col gap-1">
                           {/* Dot / Icon */}
                           <div className="absolute left-[3px] top-1 -translate-x-1/2 w-[22px] h-[22px] rounded-full bg-card border border-border flex items-center justify-center text-xs">
@@ -368,21 +458,42 @@ const FeaturedTours = () => {
                     </div>
                   </div>
 
-                  {/* Optional Experiences */}
+                  {/* Interactive Optional Experiences Grid */}
                   {selectedTour.optionalExperiences && selectedTour.optionalExperiences.length > 0 && (
                     <div>
-                      <h4 className="text-xs font-body font-semibold uppercase tracking-wider text-primary mb-3">Optional Experiences / Add-ons</h4>
+                      <h4 className="text-xs font-body font-semibold uppercase tracking-wider text-primary mb-3">
+                        Optional Experiences / Add-ons (Check to add to PDF plan)
+                      </h4>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        {selectedTour.optionalExperiences.map((opt) => (
-                          <div key={opt.name} className="flex items-start gap-2.5 p-2 rounded-lg bg-secondary/50 border border-border/50">
-                            <span className="text-sm mt-0.5">{opt.icon}</span>
-                            <div className="flex-1 min-w-0">
-                              <p className="text-xs font-body font-bold text-foreground truncate">{opt.name}</p>
-                              {opt.price && <p className="text-[10px] font-body font-semibold text-primary">{opt.price}</p>}
-                              {opt.description && <p className="text-[10px] font-body text-muted-foreground leading-tight mt-0.5">{opt.description}</p>}
-                            </div>
-                          </div>
-                        ))}
+                        {selectedTour.optionalExperiences.map((opt) => {
+                          const isSelected = selectedOptions.includes(opt.name);
+                          return (
+                            <label
+                              key={opt.name}
+                              className={`flex items-start gap-2.5 p-3 rounded-xl border cursor-pointer select-none transition-all duration-200 ${
+                                isSelected
+                                  ? "bg-primary/5 border-primary/45 shadow-sm"
+                                  : "bg-secondary/40 border-border hover:border-border/80"
+                              }`}
+                            >
+                              {/* Custom Checkbox */}
+                              <input
+                                type="checkbox"
+                                checked={isSelected}
+                                onChange={() => toggleOption(opt.name)}
+                                className="mt-0.5 h-3.5 w-3.5 rounded border-border text-primary focus:ring-primary focus:ring-opacity-20 cursor-pointer"
+                              />
+                              <div className="flex-1 min-w-0">
+                                <p className="text-xs font-body font-bold text-foreground flex items-center gap-1">
+                                  <span>{opt.icon}</span>
+                                  <span className="truncate">{opt.name}</span>
+                                </p>
+                                {opt.price && <p className="text-[10px] font-body font-semibold text-primary/90 mt-0.5">{opt.price}</p>}
+                                {opt.description && <p className="text-[10px] font-body text-muted-foreground leading-tight mt-0.5">{opt.description}</p>}
+                              </div>
+                            </label>
+                          );
+                        })}
                       </div>
                     </div>
                   )}
@@ -414,7 +525,7 @@ const FeaturedTours = () => {
                   </div>
                 </div>
 
-                {/* Right Side: Flyer Showcase & Zoom CTA */}
+                {/* Right Side: Flyer Showcase & Booking CTA */}
                 <div className="lg:col-span-5 p-6 bg-secondary/30 flex flex-col justify-between h-full">
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
@@ -497,7 +608,7 @@ const FeaturedTours = () => {
       {/* ── FULL SCREEN ZOOMABLE LIGHTBOX ── */}
       <AnimatePresence>
         {isLightboxOpen && selectedTour && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 no-print">
             {/* Close Overlay */}
             <div className="absolute inset-0" onClick={() => setIsLightboxOpen(false)} />
 
@@ -604,6 +715,157 @@ const FeaturedTours = () => {
           </div>
         )}
       </AnimatePresence>
+
+      {/* ─── PREMIUM A4 PRINT BROCHURE TEMPLATE (PRINT ONLY) ─── */}
+      {selectedTour && (
+        <div className="print-container-wrapper hidden print:block bg-white text-black font-sans leading-normal relative overflow-hidden">
+          {/* Faded Background Image Watermark */}
+          <div className="absolute inset-0 pointer-events-none opacity-[0.06] z-0 flex items-center justify-center">
+            <img
+              src={selectedTour.image}
+              alt=""
+              className="w-full h-full object-cover"
+            />
+          </div>
+
+          {/* Branded Letterhead Content (Relative to stay above background watermark) */}
+          <div className="relative z-10 space-y-6">
+            {/* Header */}
+            <div className="flex justify-between items-center border-b-2 border-[#D4AF37] pb-4 mb-6">
+              <div>
+                <h1 className="text-2xl font-bold font-serif text-black uppercase tracking-wide">
+                  Travel Deal Sri Lanka
+                </h1>
+                <p className="text-[9px] text-gray-500 uppercase tracking-widest mt-0.5 font-sans font-semibold">
+                  Curated Travel Experiences & Luxury Chauffeur Rides
+                </p>
+              </div>
+              <div className="text-right text-xs">
+              <p className="font-semibold text-black">📞 +94 766 424 532</p>
+                <p className="text-gray-600">📧 traveldealsrilanka@gmail.com</p>
+                <p className="text-gray-500 text-[10px]">Colombo, Sri Lanka</p>
+              </div>
+            </div>
+
+            {/* Title & Personalization info */}
+            <div className="bg-gray-50 border border-gray-200/80 p-4 rounded-xl mb-6 flex justify-between items-start">
+              <div>
+                <span className="text-[9px] font-semibold text-gray-400 uppercase tracking-widest block">Proposed Tour Plan</span>
+                <h2 className="text-lg font-bold font-serif text-black">{selectedTour.name}</h2>
+                <p className="text-xs text-gray-600 mt-0.5">
+                  Duration: {selectedTour.duration} ({selectedTour.durationHours}) • Pickup: {selectedTour.pickup}
+                </p>
+              </div>
+              <div className="text-right text-xs">
+                <p className="font-bold text-black uppercase text-[10px] tracking-wide">Prepared For:</p>
+                <p className="text-primary font-bold text-sm">{guestName || "Valued Guest"}</p>
+                {travelDate && <p className="text-gray-500 text-[10px] mt-0.5">Scheduled Date: {travelDate}</p>}
+              </div>
+            </div>
+
+            {/* Overview text */}
+            <div className="mb-6 bg-gray-50/50 p-3 rounded-lg border border-gray-100">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-700 border-b border-gray-200 pb-1 mb-2">Introduction</h3>
+              <p className="text-xs text-gray-700 leading-relaxed italic">
+                "{selectedTour.tagline}. This curated day tour is designed for your ultimate comfort and luxury. Enjoy private transportation with our safe, vetted chauffeur guides."
+              </p>
+            </div>
+
+            {/* Main Plan Details */}
+            <div className="mb-6">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-700 border-b border-gray-200 pb-1 mb-3">Main Tour Plan</h3>
+              <div className="space-y-3">
+                {selectedTour.attractions.map((att, index) => (
+                  <div key={index} className="flex gap-4">
+                    <span className="text-base flex-shrink-0 mt-0.5">{att.icon}</span>
+                    <div>
+                      <h4 className="text-xs font-bold text-black flex items-center gap-2">
+                        {att.name}
+                        {att.price && <span className="text-[8px] font-normal text-gray-500 font-sans border border-gray-200 px-1.5 py-0.2 rounded bg-gray-50">Ticket cost: {att.price}</span>}
+                      </h4>
+                      <p className="text-[10px] text-gray-600 leading-relaxed mt-0.5">
+                        {att.description}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Customized Selected Add-ons */}
+            <div className="mb-6">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-700 border-b border-gray-200 pb-1 mb-3">Custom Selected Options & Activities</h3>
+              {selectedOptions.length === 0 ? (
+                <p className="text-xs text-gray-400 italic pl-2">No optional activities selected. (Base package only).</p>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {selectedTour.optionalExperiences
+                    ?.filter((opt) => selectedOptions.includes(opt.name))
+                    .map((opt, i) => (
+                      <div key={i} className="flex items-start gap-2.5 p-2 bg-gray-50 border border-gray-200 rounded-lg">
+                        <span className="text-sm mt-0.5">{opt.icon}</span>
+                        <div>
+                          <p className="text-xs font-bold text-black leading-tight">{opt.name}</p>
+                          {opt.price && <p className="text-[9px] font-bold text-[#D4AF37] mt-0.5">{opt.price}</p>}
+                          {opt.description && <p className="text-[9px] text-gray-500 leading-tight mt-0.5">{opt.description}</p>}
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              )}
+            </div>
+
+            {/* Inclusions / Exclusions */}
+            <div className="grid grid-cols-2 gap-8 border-t border-gray-200 pt-4 mb-6">
+              <div>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-2">What is Included</h4>
+                <ul className="space-y-1 text-[10px] text-gray-700">
+                  {selectedTour.included.map((inc, i) => (
+                    <li key={i} className="flex items-center gap-1.5">
+                      <span className="text-emerald-600">✓</span> {inc}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-red-700 mb-2">What is Excluded</h4>
+                <ul className="space-y-1 text-[10px] text-gray-500">
+                  {selectedTour.notIncluded.map((exc, i) => (
+                    <li key={i} className="flex items-center gap-1.5">
+                      <span className="text-red-500">•</span> {exc}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {/* Pricing Summary & Footer Notes */}
+            <div className="border-t border-gray-200 pt-4 flex justify-between items-end mb-6">
+              <div>
+                <p className="text-[9px] text-gray-400 uppercase tracking-widest">Important Notes:</p>
+                <p className="text-[9px] text-gray-500 mt-0.5 max-w-sm">
+                  * Final pricing depends on group size. Private vehicle services estimate base is {selectedTour.vehiclePrice || "USD 100/day"} (fuel, parking tolls, English-speaking driver included).
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="text-[9px] text-gray-400 uppercase">Estimated Base Rate:</p>
+                <p className="text-lg font-bold text-black">${selectedTour.priceFrom} <span className="text-xs font-normal text-gray-500">/ person</span></p>
+              </div>
+            </div>
+
+            {/* Final Call to Action booking information */}
+            <div className="bg-gray-50 border border-gray-200 p-4 rounded-xl text-center text-xs">
+              <p className="font-bold text-black">Ready to lock in this itinerary and book?</p>
+              <p className="inline-flex items-center justify-center gap-1.5 text-gray-600 mt-1">
+              Contact us on WhatsApp: <strong>+94 766 424 532</strong> or email <strong>traveldealsrilanka@gmail.com</strong>
+              </p>
+              <p className="text-gray-400 text-[9px] mt-2">
+                Generated by Travel Deal Sri Lanka. Creating Unforgettable Memories.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };

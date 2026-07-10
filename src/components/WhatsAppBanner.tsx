@@ -50,7 +50,7 @@ const WhatsAppBanner = () => {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             {/* WhatsApp primary CTA */}
             <a
-              href="https://wa.me/94766040066?text=Hi!%20I'm%20interested%20in%20booking%20a%20tour%20in%20Sri%20Lanka."
+              href="https://wa.me/94766424532?text=Hi!%20I'm%20interested%20in%20booking%20a%20tour%20in%20Sri%20Lanka."
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-[hsl(142,70%,40%)] text-white font-body font-semibold text-base hover:brightness-110 transition-all duration-300 shadow-lg hover:shadow-xl"
@@ -62,11 +62,11 @@ const WhatsAppBanner = () => {
 
             {/* Phone secondary CTA */}
             <a
-              href="tel:+94766040066"
+              href="tel:+94766424532"
               className="inline-flex items-center gap-2 px-6 py-4 rounded-xl border border-white/20 text-white/80 font-body font-medium text-sm hover:bg-white/10 transition-all duration-300"
             >
               <Phone className="h-4 w-4" />
-              +94 766 040 066
+              +94 766 424 532
             </a>
           </div>
 

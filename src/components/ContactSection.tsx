@@ -28,7 +28,7 @@ const ContactSection = () => {
     const whatsappMsg = encodeURIComponent(
       `Hi! I'd like to book a tour.\n\nName: ${formData.name}\nTour: ${formData.tour || "Not decided"}\nTravelers: ${formData.travelers || "Not specified"}\nDates: ${formData.dates || "Flexible"}\nMessage: ${formData.message || "N/A"}`
     );
-    window.open(`https://wa.me/94766040066?text=${whatsappMsg}`, "_blank");
+    window.open(`https://wa.me/94766424532?text=${whatsappMsg}`, "_blank");
   };
 
   return (
@@ -68,11 +68,11 @@ const ContactSection = () => {
             {/* Contact details */}
             <div className="space-y-3 mb-8">
               <a
-                href="tel:+94766040066"
+                href="tel:+94766424532"
                 className="flex items-center gap-3 text-sm font-body text-muted-foreground hover:text-foreground transition-colors"
               >
                 <Phone className="h-4 w-4" />
-                +94 766 040 066
+                +94 766 424 532
               </a>
               <a
                 href="mailto:traveldealsrilanka@gmail.com"
@@ -89,7 +89,7 @@ const ContactSection = () => {
 
             {/* WhatsApp CTA */}
             <a
-              href="https://wa.me/94766040066?text=Hi!%20I'm%20interested%20in%20booking%20a%20tour%20in%20Sri%20Lanka."
+              href="https://wa.me/94766424532?text=Hi!%20I'm%20interested%20in%20booking%20a%20tour%20in%20Sri%20Lanka."
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-[hsl(142,70%,40%)] text-white font-body font-semibold text-sm hover:brightness-110 transition-all duration-300"

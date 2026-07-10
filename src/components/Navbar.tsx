@@ -80,7 +80,7 @@ const Navbar = () => {
           {/* Right side: phone + CTA */}
           <div className="hidden lg:flex items-center gap-4">
             <a
-              href="tel:+94766040066"
+              href="tel:+94766424532"
               className={`flex items-center gap-2 text-sm font-body font-medium transition-colors duration-300 ${
                 scrolled
                   ? "text-muted-foreground hover:text-foreground"
@@ -88,7 +88,7 @@ const Navbar = () => {
               }`}
             >
               <Phone className="h-3.5 w-3.5" />
-              <span className="hidden xl:inline">+94 766 040 066</span>
+              <span className="hidden xl:inline font-body font-semibold tracking-wide">+94 766 424 532</span>
             </a>
             <a
               href="#contact"
@@ -178,10 +178,10 @@ const Navbar = () => {
               {/* Bottom contact */}
               <div className="px-6 py-6 text-center border-t border-border">
                 <a
-                  href="tel:+94766040066"
+                  href="tel:+94766424532"
                   className="text-sm font-body text-muted-foreground"
                 >
-                  📞 +94 766 040 066
+                  📞 +94 766 424 532
                 </a>
               </div>
             </div>
