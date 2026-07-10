@@ -7,9 +7,9 @@
 
 @layer base {
   :root {
-    /* ── Nordic light palette ──
-       Followingq nordicvisitor.com: airy whites, soft grays, charcoal text.
-       Gold accent used ONLY for CTAs and trust signals. */
+    /* ── Premium travel palette ──
+       Blacklane-inspired dark hero with Viator-style warm content sections.
+       Gold accent for CTAs and trust signals. */
     --background: 0 0% 99%;              /* #FCFCFC — near-white canvas */
     --foreground: 220 15% 20%;            /* Deep charcoal for max readability */
 
@@ -35,7 +35,7 @@
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Borders are very subtle in Nordic design — barely visible */
+    /* Borders are very subtle — barely visible */
     --border: 220 14% 92%;
     --input: 220 14% 92%;
     --ring: 43 64% 52%;                  /* Gold focus ring */
@@ -45,8 +45,18 @@
     /* ── Custom semantic tokens ── */
     --gold: 43 64% 52%;
     --gold-light: 48 80% 70%;
-    --emerald: 160 84% 39%;              /* Alternative accent for trust signals */
+    --emerald: 160 84% 39%;              /* Trust signals */
     --whatsapp: 142 70% 40%;
+
+    /* ── Dark hero section tokens (Blacklane-inspired) ── */
+    --hero-bg: 220 20% 8%;              /* #0F1319 very dark navy */
+    --hero-overlay-start: 220 20% 8%;
+    --hero-overlay-end: 220 20% 8%;
+    --hero-text: 0 0% 100%;
+
+    /* ── Dark section tokens ── */
+    --dark-section-bg: 220 18% 10%;
+    --dark-section-text: 0 0% 95%;
 
     /* Sidebar tokens (required by shadcn) */
     --sidebar-background: 0 0% 100%;
@@ -65,12 +75,12 @@
     @apply border-border;
   }
 
-  /* Smooth scroll for anchor navigation — essential for single-page travel sites */
+  /* Smooth scroll for anchor navigation */
   html {
     scroll-behavior: smooth;
   }
 
-  /* Nordic body: Inter for all functional/body text, light background */
+  /* Body: Inter for all functional/body text */
   body {
     @apply bg-background text-foreground;
     font-family: 'Inter', sans-serif;
@@ -78,28 +88,36 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Playfair Display ONLY for editorial headings (H2s) — Nordic approach uses
-     serif sparingly for elegance, not everywhere */
+  /* Playfair Display for editorial headings */
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Playfair Display', serif;
   }
 }
 
 @layer utilities {
-  /* Gold gradient text — used very sparingly in Nordic design (logo, one hero word) */
+  /* Gold gradient text — used sparingly (logo, one hero word) */
   .text-gold-gradient {
     @apply bg-clip-text text-transparent;
     background-image: linear-gradient(135deg, hsl(43 64% 52%), hsl(48 80% 75%));
   }
 
-  /* Nordic card shadow — subtle, refined elevation instead of heavy glassmorphism */
+  /* Nordic card shadow — subtle, refined elevation */
   .shadow-nordic {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.06);
   }
 
-  /* Hover-elevated shadow — slightly more pronounced for interactive cards */
+  /* Hover-elevated shadow */
   .shadow-nordic-hover {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08), 0 8px 32px rgba(0, 0, 0, 0.06);
+  }
+
+  /* Viator-style card shadow — slightly more prominent */
+  .shadow-tour-card {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.04);
+  }
+
+  .shadow-tour-card-hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 12px 48px rgba(0, 0, 0, 0.06);
   }
 
   /* Trust badge green dot pulse */
@@ -110,5 +128,59 @@
   @keyframes pulse-dot {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.5; }
+  }
+
+  /* Ken Burns animation for hero */
+  @keyframes kenburns {
+    0% { transform: scale(1) translate(0, 0); }
+    100% { transform: scale(1.08) translate(-1%, -1%); }
+  }
+
+  /* Hero image crossfade */
+  @keyframes hero-fade {
+    0%, 30% { opacity: 1; }
+    33.33%, 96.67% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
+  /* Scroll snap for carousels */
+  .scroll-snap-x {
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .scroll-snap-start {
+    scroll-snap-align: start;
+  }
+
+  /* Hide scrollbar for carousels */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Star rating gold fill */
+  .star-filled {
+    color: hsl(43 96% 56%);
+  }
+  .star-empty {
+    color: hsl(220 14% 85%);
+  }
+
+  /* Badge styles — using raw colors to avoid Tailwind @apply resolution issues */
+  .badge-bestseller {
+    background-color: #ef4444;
+    color: #ffffff;
+  }
+  .badge-popular {
+    background-color: #3b82f6;
+    color: #ffffff;
+  }
+  .badge-new {
+    background-color: #10b981;
+    color: #ffffff;
   }
 }

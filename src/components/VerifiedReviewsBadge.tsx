@@ -1,86 +1,117 @@
 /**
- * VerifiedReviewsBadge.tsx — Floating "Verified Reviews" trust badge
+ * VerifiedReviewsBadge.tsx — Floating trust badge (bottom-left)
  *
- * DESIGN NOTES (nordicvisitor.com trust pattern):
- * - Fixed bottom-left floating badge
- * - Default state: compact pill with star + "Verified Reviews"
- * - Hover state: expands to show 5-star rating + review snippet
- * - Uses Framer Motion for smooth expand animation
- * - Green "verified" dot pulses subtly to draw attention
- * - Minimally intrusive — enhances trust without blocking content
+ * DESIGN NOTES:
+ * - Fixed bottom-left position
+ * - Compact by default, expands on hover to show details
+ * - Uses real aggregate rating data
  */
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Star } from "lucide-react";
+import { Star, Shield } from "lucide-react";
+import { aggregateRating } from "@/data/reviews";
 
 const VerifiedReviewsBadge = () => {
-  /* Track hover state for expansion */
-  const [isHovered, setIsHovered] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
   return (
-    /* Fixed positioning — bottom-left, above the mobile sticky bar on lg+ screens */
-    <div
-      className="fixed bottom-6 left-6 z-50 hidden lg:block"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+    <motion.div
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: 3, duration: 0.5 }}
+      className="fixed bottom-6 left-6 z-40 hidden sm:block"
+      onMouseEnter={() => setExpanded(true)}
+      onMouseLeave={() => setExpanded(false)}
     >
-      <motion.div
-        layout
-        className="bg-card rounded-lg border border-border shadow-nordic-hover overflow-hidden cursor-pointer"
-        transition={{ duration: 0.3, ease: "easeInOut" as const }}
-      >
-        {/* ── Compact state: pill badge ── */}
-        <div className="flex items-center gap-2.5 px-4 py-3">
-          {/* Pulsing green verified dot */}
-          <span className="w-2 h-2 rounded-full bg-emerald pulse-dot" />
+      <div className="bg-card rounded-xl shadow-tour-card-hover border border-border overflow-hidden cursor-pointer">
+        {/* Compact view — always visible */}
+        <div className="flex items-center gap-3 px-4 py-3">
+          {/* Green pulse dot */}
+          <div className="relative">
+            <Shield className="h-5 w-5 text-emerald-500" />
+            <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 pulse-dot" />
+          </div>
 
-          {/* Star icon in gold */}
-          <Star className="h-3.5 w-3.5 text-primary fill-primary" />
-
-          <span className="text-xs font-body font-semibold text-foreground whitespace-nowrap">
-            4.9 — Verified Reviews
-          </span>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-0.5">
+              {[1, 2, 3, 4, 5].map((s) => (
+                <Star
+                  key={s}
+                  className={`h-3 w-3 ${
+                    s <= Math.round(aggregateRating.average)
+                      ? "star-filled fill-current"
+                      : "star-empty"
+                  }`}
+                />
+              ))}
+            </div>
+            <span className="text-sm font-body font-bold text-foreground">
+              {aggregateRating.average}
+            </span>
+            <span className="text-xs font-body text-muted-foreground">
+              ({aggregateRating.total}+)
+            </span>
+          </div>
         </div>
 
-        {/* ── Expanded state: review snippet ── */}
+        {/* Expanded details */}
         <AnimatePresence>
-          {isHovered && (
+          {expanded && (
             <motion.div
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3, ease: "easeInOut" as const }}
+              transition={{ duration: 0.3 }}
               className="overflow-hidden"
             >
-              <div className="px-4 pb-3 pt-1 border-t border-border">
-                {/* 5-star rating row */}
-                <div className="flex items-center gap-0.5 mb-2">
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <Star
-                      key={i}
-                      className="h-3 w-3 text-primary fill-primary"
-                    />
-                  ))}
-                  <span className="text-[11px] font-body text-muted-foreground ml-1.5">
-                    128 reviews
-                  </span>
+              <div className="px-4 pb-4 border-t border-border pt-3">
+                <p className="text-xs font-body font-semibold text-foreground mb-2">
+                  Verified Traveler Reviews
+                </p>
+
+                {/* Rating breakdown */}
+                <div className="space-y-1">
+                  {[5, 4, 3, 2, 1].map((rating) => {
+                    const count =
+                      aggregateRating.breakdown[
+                        rating as keyof typeof aggregateRating.breakdown
+                      ];
+                    const percentage = Math.round(
+                      (count / aggregateRating.total) * 100
+                    );
+                    return (
+                      <div
+                        key={rating}
+                        className="flex items-center gap-2 text-[11px] font-body"
+                      >
+                        <span className="text-muted-foreground w-3">
+                          {rating}
+                        </span>
+                        <Star className="h-2.5 w-2.5 star-filled fill-current" />
+                        <div className="flex-1 h-1.5 bg-secondary rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-primary rounded-full"
+                            style={{ width: `${percentage}%` }}
+                          />
+                        </div>
+                        <span className="text-muted-foreground w-6 text-right">
+                          {count}
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
 
-                {/* Review snippet */}
-                <p className="text-xs font-body text-muted-foreground italic leading-relaxed max-w-[220px]">
-                  "Incredible experience! Our driver was professional and the
-                  itinerary was perfectly planned."
-                </p>
-                <p className="text-[11px] font-body font-medium text-foreground mt-1.5">
-                  — Sarah M., London
+                <p className="text-[10px] font-body text-muted-foreground mt-2">
+                  ✓ All reviews from real travelers
                 </p>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
-      </motion.div>
-    </div>
+      </div>
+    </motion.div>
   );
 };
 
