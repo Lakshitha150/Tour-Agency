@@ -15,7 +15,18 @@ export interface Destination {
   highlights: string[];
 }
 
-export const destinations: Destination[] = [
+// Load custom destinations from localStorage safely
+const getCustomDestinations = (): Destination[] => {
+  try {
+    const custom = localStorage.getItem("traveldeal_custom_destinations");
+    return custom ? JSON.parse(custom) : [];
+  } catch (e) {
+    console.error("Failed to load custom destinations", e);
+    return [];
+  }
+};
+
+const staticDestinations: Destination[] = [
   {
     id: "sigiriya",
     name: "Sigiriya",
@@ -32,7 +43,7 @@ export const destinations: Destination[] = [
     description: "Sri Lanka's cultural capital nestled among misty hills, home to the sacred Temple of the Tooth.",
     tourCount: 3,
     image: "/destinations/kandy.png",
-    highlights: ["Temple of the Tooth", "Botanical Garden", "Cultural Dance"],
+    highlights: ["Temple of the Tooth", "Botanical Garden", "Tea Plantations"],
   },
   {
     id: "ella",
@@ -89,3 +100,27 @@ export const destinations: Destination[] = [
     highlights: ["Nilaveli Beach", "Whale Watching", "Koneswaram Temple"],
   },
 ];
+
+// Proxy to dynamically combine static destinations and custom destinations
+export const destinations = new Proxy(staticDestinations, {
+  get(target, prop, receiver) {
+    const custom = getCustomDestinations();
+    const combined = [...staticDestinations, ...custom];
+    
+    const value = Reflect.get(combined, prop, receiver);
+    if (typeof value === "function") {
+      return value.bind(combined);
+    }
+    return value;
+  },
+  getOwnPropertyDescriptor(target, prop) {
+    const custom = getCustomDestinations();
+    const combined = [...staticDestinations, ...custom];
+    return Reflect.getOwnPropertyDescriptor(combined, prop);
+  },
+  ownKeys() {
+    const custom = getCustomDestinations();
+    const combined = [...staticDestinations, ...custom];
+    return Reflect.ownKeys(combined);
+  }
+}) as unknown as Destination[];

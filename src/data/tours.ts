@@ -46,7 +46,18 @@ export interface TourPackage {
   badge?: "BESTSELLER" | "NEW" | "POPULAR";
 }
 
-export const tours: TourPackage[] = [
+// Load custom tours from localStorage safely
+const getCustomTours = (): TourPackage[] => {
+  try {
+    const custom = localStorage.getItem("traveldeal_custom_tours");
+    return custom ? JSON.parse(custom) : [];
+  } catch (e) {
+    console.error("Failed to load custom tours", e);
+    return [];
+  }
+};
+
+const staticTours: TourPackage[] = [
   {
     id: "sigiriya-day-tour",
     name: "Sigiriya Day Tour",
@@ -234,6 +245,31 @@ export const tours: TourPackage[] = [
     badge: "POPULAR",
   },
 ];
+
+// Proxy to dynamically combine static tours and custom tours
+export const tours = new Proxy(staticTours, {
+  get(target, prop, receiver) {
+    const custom = getCustomTours();
+    const combined = [...staticTours, ...custom];
+    
+    // Resolve standard array operations
+    const value = Reflect.get(combined, prop, receiver);
+    if (typeof value === "function") {
+      return value.bind(combined);
+    }
+    return value;
+  },
+  getOwnPropertyDescriptor(target, prop) {
+    const custom = getCustomTours();
+    const combined = [...staticTours, ...custom];
+    return Reflect.getOwnPropertyDescriptor(combined, prop);
+  },
+  ownKeys() {
+    const custom = getCustomTours();
+    const combined = [...staticTours, ...custom];
+    return Reflect.ownKeys(combined);
+  }
+}) as unknown as TourPackage[];
 
 /** Helper: get a tour by ID */
 export const getTourById = (id: string) => tours.find((t) => t.id === id);

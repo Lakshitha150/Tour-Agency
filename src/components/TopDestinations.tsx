@@ -8,13 +8,14 @@
  * - Scroll-snap on mobile for smooth swiping
  */
 
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, MapPin } from "lucide-react";
 import { destinations } from "@/data/destinations";
 
 const TopDestinations = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
 
   const scroll = (direction: "left" | "right") => {
     if (!scrollRef.current) return;
@@ -24,6 +25,24 @@ const TopDestinations = () => {
       behavior: "smooth",
     });
   };
+
+  useEffect(() => {
+    if (isHovered) return;
+
+    const interval = setInterval(() => {
+      if (!scrollRef.current) return;
+      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+      
+      // Check if we are near the end
+      if (scrollLeft + clientWidth >= scrollWidth - 15) {
+        scrollRef.current.scrollTo({ left: 0, behavior: "smooth" });
+      } else {
+        scrollRef.current.scrollBy({ left: 300, behavior: "smooth" });
+      }
+    }, 3500); // Auto-scroll every 3.5 seconds
+
+    return () => clearInterval(interval);
+  }, [isHovered]);
 
   return (
     <section id="destinations" className="py-20 bg-background">
@@ -68,6 +87,8 @@ const TopDestinations = () => {
         {/* Horizontal scrollable carousel */}
         <div
           ref={scrollRef}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
           className="flex gap-5 overflow-x-auto scroll-snap-x scrollbar-hide pb-4 -mx-6 px-6"
         >
           {destinations.map((dest, i) => (

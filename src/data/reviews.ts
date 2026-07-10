@@ -16,7 +16,18 @@ export interface Review {
   date: string;
 }
 
-export const reviews: Review[] = [
+// Load custom reviews from localStorage safely
+const getCustomReviews = (): Review[] => {
+  try {
+    const custom = localStorage.getItem("traveldeal_custom_reviews");
+    return custom ? JSON.parse(custom) : [];
+  } catch (e) {
+    console.error("Failed to load custom reviews", e);
+    return [];
+  }
+};
+
+const staticReviews: Review[] = [
   {
     id: "r1",
     name: "James Mitchell",
@@ -85,15 +96,73 @@ export const reviews: Review[] = [
   },
 ];
 
-/** Overall aggregate rating data */
-export const aggregateRating = {
-  average: 4.9,
-  total: 120,
-  breakdown: {
+// Proxy to dynamically combine static reviews and custom reviews
+export const reviews = new Proxy(staticReviews, {
+  get(target, prop, receiver) {
+    const custom = getCustomReviews();
+    const combined = [...staticReviews, ...custom];
+    
+    const value = Reflect.get(combined, prop, receiver);
+    if (typeof value === "function") {
+      return value.bind(combined);
+    }
+    return value;
+  },
+  getOwnPropertyDescriptor(target, prop) {
+    const custom = getCustomReviews();
+    const combined = [...staticReviews, ...custom];
+    return Reflect.getOwnPropertyDescriptor(combined, prop);
+  },
+  ownKeys() {
+    const custom = getCustomReviews();
+    const combined = [...staticReviews, ...custom];
+    return Reflect.ownKeys(combined);
+  }
+}) as unknown as Review[];
+
+/** Dynamic aggregate rating calculations */
+export const getAggregateRating = () => {
+  const custom = getCustomReviews();
+  
+  let total = 120;
+  let sum = 120 * 4.9;
+  const breakdown = {
     5: 98,
     4: 18,
     3: 3,
     2: 1,
     1: 0,
-  },
+  };
+
+  custom.forEach((r) => {
+    total += 1;
+    sum += r.rating;
+    const ratingKey = r.rating as 1 | 2 | 3 | 4 | 5;
+    if (breakdown[ratingKey] !== undefined) {
+      breakdown[ratingKey] += 1;
+    }
+  });
+
+  const average = total > 0 ? Math.round((sum / total) * 10) / 10 : 0;
+
+  return {
+    average,
+    total,
+    breakdown,
+  };
 };
+
+export const aggregateRating = new Proxy({} as any, {
+  get(target, prop) {
+    const data = getAggregateRating();
+    return Reflect.get(data, prop);
+  },
+  getOwnPropertyDescriptor(target, prop) {
+    const data = getAggregateRating();
+    return Reflect.getOwnPropertyDescriptor(data, prop);
+  },
+  ownKeys() {
+    const data = getAggregateRating();
+    return Reflect.ownKeys(data);
+  }
+});

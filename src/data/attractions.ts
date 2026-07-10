@@ -15,7 +15,18 @@ export interface Attraction {
   tourIds: string[]; // IDs of tours that include this attraction
 }
 
-export const attractions: Attraction[] = [
+// Load custom attractions from localStorage safely
+const getCustomAttractions = (): Attraction[] => {
+  try {
+    const custom = localStorage.getItem("traveldeal_custom_attractions");
+    return custom ? JSON.parse(custom) : [];
+  } catch (e) {
+    console.error("Failed to load custom attractions", e);
+    return [];
+  }
+};
+
+const staticAttractions: Attraction[] = [
   {
     id: "sigiriya-rock",
     name: "Sigiriya Lion Rock Fortress",
@@ -97,3 +108,27 @@ export const attractions: Attraction[] = [
     tourIds: [],
   },
 ];
+
+// Proxy to dynamically combine static attractions and custom attractions
+export const attractions = new Proxy(staticAttractions, {
+  get(target, prop, receiver) {
+    const custom = getCustomAttractions();
+    const combined = [...staticAttractions, ...custom];
+    
+    const value = Reflect.get(combined, prop, receiver);
+    if (typeof value === "function") {
+      return value.bind(combined);
+    }
+    return value;
+  },
+  getOwnPropertyDescriptor(target, prop) {
+    const custom = getCustomAttractions();
+    const combined = [...staticAttractions, ...custom];
+    return Reflect.getOwnPropertyDescriptor(combined, prop);
+  },
+  ownKeys() {
+    const custom = getCustomAttractions();
+    const combined = [...staticAttractions, ...custom];
+    return Reflect.ownKeys(combined);
+  }
+}) as unknown as Attraction[];
